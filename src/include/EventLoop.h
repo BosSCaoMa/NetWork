@@ -8,7 +8,9 @@
 #include "CurrentThread.h" 
 class Channel;
 class Poller;
-
+/*
+|----> CurrentThread
+*/
 using ChannelList = std::vector<Channel*>;
 using Functor =  std::function<void()>;
 // EventLoop就是负责实现“循环”，负责驱动“循环”的重要模块
