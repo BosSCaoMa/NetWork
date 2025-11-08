@@ -41,14 +41,19 @@ TimeStamp EpollPoller::poll(int timeoutMs, ChannelList *activeChannels)
 
     if (numEvents > 0) {
         // 处理活跃的事件
-        for (int i = 0; i < numEvents; ++i) {
-            Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
-            channel->set_revents(events_[i].events);
-            activeChannels->push_back(channel); // EventLoop就拿到了它的Poller给它返回的所有发生事件的channel列表了
-        }
+        fillActiveChannel(numEvents, activeChannels);
         if (numEvents == events_.size()) {
             events_.resize(events_.size() * 2); // 扩容
         }
+    }
+}
+
+void EpollPoller::fillActiveChannel(int numEvents, ChannelList *activeChannels)
+{
+    for (int i = 0; i < numEvents; ++i) {
+        Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
+        channel->set_revents(events_[i].events);
+        activeChannels->push_back(channel); // EventLoop就拿到了它的Poller给它返回的所有发生事件的channel列表了
     }
 }
 
@@ -99,14 +104,18 @@ void EpollPoller::removeChannel(Channel *channel)
     channel->set_index(kNew);
 }
 
+// 更新epoll实例中的某个文件描述符对应的事件监听设置
 void EpollPoller::update(int operation, Channel *channel)
 {
-    struct epoll_event event;
+    int fd = channel->fd();
+
+    epoll_event event;
     memset(&event, 0, sizeof event);
+
     event.events = static_cast<uint32_t>(channel->events());
+    event.data.fd = fd;
     event.data.ptr = channel; // 保存Channel指针，方便后续处理事件时获取对应的Channel对象
 
-    int fd = channel->fd();
     if (::epoll_ctl(epollfd_, operation, fd, &event) < 0) {
         // Handle error appropriately (e.g., throw exception, log error)
     }

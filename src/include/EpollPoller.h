@@ -18,7 +18,8 @@ public:
     EpollPoller(EventLoop *loop);
     ~EpollPoller();
 
-    TimeStamp poll(int timeoutMs, ChannelList *activeChannels) override;
+    TimeStamp poll(int timeoutMs, ChannelList *activeChannels) override; // 调用一次Poller::poll方法它就能给你返回事件监听器的监听结果
+    void fillActiveChannel(int numEvents, ChannelList *activeChannels);
     void updateChannel(Channel *channel) override;
     void removeChannel(Channel *channel) override;
 

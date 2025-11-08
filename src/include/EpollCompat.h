@@ -46,7 +46,15 @@
 #ifndef EPOLL_CTL_MOD
 #define EPOLL_CTL_MOD 3
 #endif
-
+#ifndef EFD_NONBLOCK
+#define EFD_NONBLOCK 0x800000
+#endif
+#ifndef EFD_CLOEXEC
+#define EFD_CLOEXEC 0x8000000
+#endif
+#ifndef SYS_gettid
+#define SYS_gettid 186
+#endif
 // 结构体与函数桩，仅保证能被编译链接，不提供实际功能。
 union epoll_data { void* ptr; int fd; uint32_t u32; uint64_t u64; };
 struct epoll_event { uint32_t events; epoll_data data; };
@@ -54,7 +62,8 @@ struct epoll_event { uint32_t events; epoll_data data; };
 inline int epoll_create1(int) { return -1; }
 inline int epoll_ctl(int, int, int, struct epoll_event*) { return -1; }
 inline int epoll_wait(int, struct epoll_event*, int, int) { return 0; }
-
+inline int eventfd(unsigned int, int) { return -1; }
+inline int syscall(int, ...) { return -1; }
 #endif // !__linux__
 
 #endif // EPOLL_COMPAT_H

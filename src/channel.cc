@@ -29,3 +29,35 @@ Channel::Channel(EventLoop *loop, int fd) :
     tied_(false) {}
 
 Channel::~Channel() {} // 析构不 close 是因为 Channel 只是事件层适配器，不负责底层 fd 资源的所有权与释放，遵循单一职责与避免双重关闭。
+
+void Channel::handleEvent(TimeStamp receiveTime)
+{
+    if (tied_) {
+        std::shared_ptr<void> guard = tie_.lock(); // 尝试提升 weak_ptr 为 shared_ptr
+        if (guard) {
+            handleEventWithGuard(receiveTime); // 如果提升成功（即 guard 不为空），说明 TcpConnection 对象还存在
+        }
+    } else {
+        handleEventWithGuard(receiveTime);
+    }
+}
+
+void Channel::handleEventWithGuard(TimeStamp receiveTime)
+{
+    // 处理挂起事件
+    if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN)) {
+        if (closeCallback_) closeCallback_();
+    }
+    // 处理错误事件
+    if (revents_ & EPOLLERR) {
+        if (errorCallback_) errorCallback_();
+    }
+    // 处理读事件
+    if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
+        if (readCallback_) readCallback_(receiveTime);
+    }
+    // 处理写事件
+    if (revents_ & EPOLLOUT) {
+        if (writeCallback_) writeCallback_();
+    }
+}
