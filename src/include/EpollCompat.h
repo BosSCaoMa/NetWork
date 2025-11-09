@@ -66,6 +66,7 @@ inline int eventfd(unsigned int, int) { return -1; }
 inline int syscall(int, ...) { return -1; }
 inline int readv(int, const struct iovec*, int) { return -1; }
 inline int close(int) { return -1; }
+inline int send(int, const void*, size_t) { return -1; }
 #endif // !__linux__
 
 #endif // EPOLL_COMPAT_H

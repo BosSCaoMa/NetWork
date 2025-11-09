@@ -31,6 +31,8 @@ public:
     int index() { return index_; }
     void set_index(int idx) { index_ = idx; }
     bool isNoneEvent() const { return events_ == kNoneEvent; }
+    bool isWriting() const { return events_ & kWriteEvent; }
+    bool isReading() const { return events_ & kReadEvent; }
 
     void enableReading() { events_ |= kReadEvent; update(); }
     void disableReading() { events_ &= ~kReadEvent; update(); }
