@@ -64,6 +64,8 @@ inline int epoll_ctl(int, int, int, struct epoll_event*) { return -1; }
 inline int epoll_wait(int, struct epoll_event*, int, int) { return 0; }
 inline int eventfd(unsigned int, int) { return -1; }
 inline int syscall(int, ...) { return -1; }
+inline int readv(int, const struct iovec*, int) { return -1; }
+inline int close(int) { return -1; }
 #endif // !__linux__
 
 #endif // EPOLL_COMPAT_H
