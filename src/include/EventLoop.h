@@ -28,7 +28,7 @@ public:
     void updateChannel(Channel *channel); // 更新Channel
     void removeChannel(Channel *channel); // 移除Channel
     bool hasChannel(Channel *channel);
-
+    void quit();
 private:
     ChannelList activeChannels_; // 活跃的Channel列表
     std::unique_ptr<Poller> poller_; // IO复用的具体实现对象
@@ -47,5 +47,5 @@ private:
     void handleRead();
     void wakeup();
     void doPendingFunctors(); // 执行其他线程提交的回调操作
-    void quit();
+    
 };
