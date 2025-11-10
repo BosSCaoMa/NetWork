@@ -2,15 +2,14 @@
 
 #include "nocopyable.h"
 #include <functional>
-
+#include "Socket.h"
+#include "Channel.h"
 /*
 |----> inetAddress
 |----> socket
 */
 class InetAddress;
 class EventLoop;
-class Socket;
-class Channel;
 
 /*
 Q:没有定义Cpp文件时，前向声明似乎会失效，提示“不允许使用不完整的类型”
@@ -24,7 +23,7 @@ class Accepter : nocopyable {
 public:
     using NewConnectionCallback = std::function<void(int sockfd, const InetAddress&)>;
 
-    Accepter(EventLoop* loop, const InetAddress& listenAddr);
+    Accepter(EventLoop* loop, const InetAddress& listenAddr, bool reusePort);
     ~Accepter();
 
     // TcpServer 会调用这个函数，注册用户处理新连接的回调函数

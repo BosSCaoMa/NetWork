@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "CallBacks.h"
+#include "Buffer.h"
 class Buffer;
 class EventLoop;
 class Channel;
@@ -21,7 +22,7 @@ public:
     ~TcpConnection();
 
     // 获得私有变量
-    EventLoop* getLoop() const { return loop_; }
+    const std::string& getName() const { return name_; }
     const std::string& getName() const { return name_.c_str(); }
     const InetAddress& getLocalAddr() { return localAddr_; };
     const InetAddress& getPeerAddr() { return peerAddr_; };
@@ -44,6 +45,8 @@ public:
     void shutdown(); // 关闭半连接
     void connectEstablished(); // 连接建立
     void connectDestroyed(); // 连接销毁
+
+    const std::string &name() const { return name_; }
 private:
     enum StateE {
         kDisconnected, // 已经断开连接
@@ -60,14 +63,10 @@ private:
     EventLoop* loop_;
     const std::string name_;
 
-    const InetAddress localAddr_;
     const InetAddress peerAddr_;
 
-    // 读写缓冲区
-    Buffer inputBuffer_;
-    Buffer outputBuffer_;
-
     // 回调函数
+    ConnectionCallback connectionCallback_;       // 有新连接时的回调
     ConnectionCallback connectionCallback_;       // 有新连接时的回调
     MessageCallback messageCallback_;             // 有读写消息时的回调
     WriteCompleteCallback writeCompleteCallback_; // 消息发送完成以后的回调

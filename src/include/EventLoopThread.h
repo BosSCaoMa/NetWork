@@ -24,6 +24,6 @@ private:
     Thread thread_;
     std::mutex mutex_;             // 互斥锁
     std::condition_variable cond_; // 条件变量
-
+    
     void threadFunc(); // 线程函数，在线程中运行 EventLoop
 };

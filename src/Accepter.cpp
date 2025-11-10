@@ -7,7 +7,7 @@
 #include "EpollCompat.h"
 #endif
 
-Accepter::Accepter(EventLoop *loop, const InetAddress &listenAddr)
+Accepter::Accepter(EventLoop *loop, const InetAddress &listenAddr, bool reusePort)
 : listening_(false),
   loop_(loop),
 #ifdef __linux__
