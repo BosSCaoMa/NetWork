@@ -46,6 +46,8 @@ public:
     void connectEstablished(); // 连接建立
     void connectDestroyed(); // 连接销毁
 
+    EventLoop* getLoop() { return loop_; }
+
     const std::string &name() const { return name_; }
 private:
     enum StateE {
@@ -64,7 +66,7 @@ private:
     const std::string name_;
 
     const InetAddress peerAddr_;
-
+    const InetAddress localAddr_;
     // 回调函数
     ConnectionCallback connectionCallback_;       // 有新连接时的回调
     ConnectionCallback connectionCallback_;       // 有新连接时的回调
